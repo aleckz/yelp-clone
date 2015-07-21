@@ -48,6 +48,8 @@ end
 
 group :test do
 
+  gem 'shoulda'
+
   gem 'rspec-rails'
 
   gem 'capybara'
