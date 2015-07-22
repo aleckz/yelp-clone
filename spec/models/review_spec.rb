@@ -1,11 +1,12 @@
-require 'rails_helper'
+require 'spec_helper'
 
-RSpec.describe Review, type: :model do
-    it { is_expected.to belong_to :restaurant }
+describe Review, type: :model do
+  it { is_expected.to belong_to :restaurant}
 
-    it 'cannot rate more than 5' do
-      review = Review.create(rating: 7)
-      expect(review).to have(1).error_on(:rating)
-      expect(review).not_to be_valid
-    end
+  it 'should be destroyed when restaurant is destroyed' do
+    kfc = Restaurant.create name:'KFC'
+    kfc.reviews.create(thoughts: 'so so')
+    kfc.destroy
+    expect(Review.find_by thoughts: 'so so').to equal nil
+  end
 end

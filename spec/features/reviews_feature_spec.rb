@@ -1,33 +1,36 @@
 require 'rails_helper'
 
 feature 'reviewing' do
+  before {Restaurant.create name:'KFC'}
 
-  context 'creating reviews' do
-    before { Restaurant.create name: 'KFC' }
+  scenario 'allows users to leave a review using a form' do
+    visit '/restaurants'
+    click_link 'Review KFC'
+    fill_in "Thoughts", with: "so so"
+    select '3', from: 'Rating'
+    click_button 'Leave Review'
 
-    scenario 'allows users to leave a review using a form' do
-      visit '/restaurants'
-      click_link 'Review KFC'
-      fill_in 'Thoughts', with: 'Mumtaaaz'
-      select '3', from: 'Rating'
-      click_button 'Leave Review'
+    expect(current_path).to eq '/restaurants'
+    expect(page).to have_content('so so')
+  end
+end
 
-      expect(current_path).to eq '/restaurants'
-      expect(page).to have_content ('Mumtaaaz')
-    end
+feature 'reviews' do
+
+  scenario 'are destroyed when the associated retaurant is destroyed' do
+    Restaurant.create name:'KFC'
+    delete_restaurant
+    expect(page).not_to have_content('so so')
   end
 
-  context 'tying in reviews/restaurant deletion' do
-    before(:each) do
-      restaurant = Restaurant.create name: 'KFC'
-      Review.create(thoughts: 'great', rating: 4, restaurant_id: restaurant.id)
-    end
-
-    scenario 'reviews are deleted when restaurant is deleted' do
-      visit '/restaurants'
-      click_link 'Delete KFC'
-      expect(page).not_to have_content 'great'
-    end
+  def delete_restaurant
+    visit '/restaurants'
+    click_link 'Review KFC'
+    fill_in "Thoughts", with: "so so"
+    select '3', from: 'Rating'
+    click_button 'Leave Review'
+    visit '/restaurants'
+    click_link 'Delete KFC'
   end
-  
+
 end
