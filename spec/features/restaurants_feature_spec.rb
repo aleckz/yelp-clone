@@ -22,13 +22,22 @@ feature 'restaurants' do
   end
 
   context 'creating restaurants' do
+
     scenario 'prompts user to fill out a form, then displays the new restaurant' do
-      visit '/restaurants'
+      visit '/'
+      sign_up
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'KFC'
       click_button 'Create Restaurant'
       expect(page).to have_content 'KFC'
       expect(current_path).to eq '/restaurants'
+    end
+
+    scenario 'user cannot create a restaurant unless they are logged in' do
+      visit('/')
+      click_link('Add a restaurant')
+      expect(current_path).to eq("/users/sign_in")
+      expect(page).to have_content("Log in")
     end
   end
 
@@ -47,7 +56,8 @@ feature 'restaurants' do
     before {Restaurant.create(name: 'KFC')}
 
     scenario 'lets a user edit a restaurant' do
-      visit '/restaurants'
+      visit '/'
+      sign_up
       click_link 'Edit KFC'
       fill_in 'Name', with: 'Kentucky Fried Chicken'
       click_button 'Update Restaurant'
@@ -77,5 +87,23 @@ feature 'restaurants' do
       expect(page).to have_content 'error'
     end
   end
+
+    def sign_up
+      visit '/'
+      click_link 'Sign up'
+      fill_in 'Email', with: 'test@email.com'
+      fill_in 'Password', with: 'password'
+      fill_in 'Password confirmation', with: 'password'
+      click_button 'Sign up'
+    end
+
+    def sign_in
+      visit '/'
+      click_link 'Sign in'
+      fill_in 'Email', with: 'test@email.com'
+      fill_in 'Password', with: 'password'
+      click_button 'Log in'
+    end
+
 
 end

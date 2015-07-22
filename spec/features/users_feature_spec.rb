@@ -35,4 +35,5 @@ feature "User can sign in and out" do
       expect(page).not_to have_link('Sign up')
     end
   end
+
 end
