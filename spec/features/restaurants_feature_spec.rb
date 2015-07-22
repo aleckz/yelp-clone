@@ -71,6 +71,7 @@ feature 'restaurants' do
 
     scenario 'removes a restaurant when a user clicks a delete link' do
       visit '/restaurants'
+      sign_up
       click_link 'Delete KFC'
       expect(page).not_to have_content 'KFC'
       expect(page).to have_content 'Restaurant deleted successfully'
@@ -80,6 +81,7 @@ feature 'restaurants' do
   context 'an invalid restaurant' do
     it 'does not let you submit a name that is too short' do
       visit '/restaurants'
+      sign_up
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'kf'
       click_button 'Create Restaurant'
