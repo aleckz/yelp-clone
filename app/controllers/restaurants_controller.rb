@@ -11,17 +11,17 @@ class RestaurantsController < ApplicationController
   end
 
   def create
-    restaurant = Restaurant.new(restaurant_params)
-    if restaurant.save
-      redirect_to '/restaurants'
+    @restaurant = Restaurant.new(restaurant_params)
+    if @restaurant.save
+      redirect_to restaurants_path
     else
-      @restaurant = restaurant
       render 'new'
     end
   end
 
   def restaurant_params
-    params.require(:restaurant).permit(:name)
+    params[:restaurant][:user_id] = current_user.id
+    params.require(:restaurant).permit(:name, :user_id)
   end
 
   def show
@@ -30,6 +30,10 @@ class RestaurantsController < ApplicationController
 
   def edit
     @restaurant = Restaurant.find(params[:id])
+    if user_did_not_create_restaurant
+      flash[:notice] = "You can't edit someone else's restaurant"
+      redirect_to restaurants_path
+    end
   end
 
   def update
@@ -41,8 +45,17 @@ class RestaurantsController < ApplicationController
 
   def destroy
     @restaurant = Restaurant.find(params[:id])
-    @restaurant.destroy
-    flash[:notice] = 'Restaurant deleted successfully'
-    redirect_to '/restaurants'
+    if user_did_not_create_restaurant
+      flash[:notice] = "You can't delete someone else's restaurant"
+      redirect_to restaurants_path
+    else
+      @restaurant.destroy
+      flash[:notice] = 'Restaurant deleted successfully'
+      redirect_to '/restaurants'
+    end
+  end
+
+  def user_did_not_create_restaurant
+    @restaurant.user != current_user
   end
 end

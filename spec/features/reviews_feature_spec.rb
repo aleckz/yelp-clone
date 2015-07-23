@@ -7,6 +7,7 @@ feature 'reviewing' do
 
     scenario 'allows users to leave a review using a form' do
       visit '/restaurants'
+      sign_up
       click_link 'Review KFC'
       fill_in 'Thoughts', with: 'Mumtaaaz'
       select '3', from: 'Rating'
@@ -29,5 +30,14 @@ feature 'reviewing' do
       expect(page).not_to have_content 'great'
     end
   end
-  
+
+  def sign_up
+    visit '/'
+    click_link 'Sign up'
+    fill_in 'Email', with: 'test@email.com'
+    fill_in 'Password', with: 'password'
+    fill_in 'Password confirmation', with: 'password'
+    click_button 'Sign up'
+  end
+
 end

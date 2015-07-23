@@ -32,13 +32,6 @@ feature 'restaurants' do
       expect(page).to have_content 'KFC'
       expect(current_path).to eq '/restaurants'
     end
-
-    scenario 'user cannot create a restaurant unless they are logged in' do
-      visit('/')
-      click_link('Add a restaurant')
-      expect(current_path).to eq("/users/sign_in")
-      expect(page).to have_content("Log in")
-    end
   end
 
   context 'viewing restaurants' do
@@ -58,7 +51,10 @@ feature 'restaurants' do
     scenario 'lets a user edit a restaurant' do
       visit '/'
       sign_up
-      click_link 'Edit KFC'
+      click_link 'Add a restaurant'
+      fill_in 'Name', with: 'Nandos'
+      click_button 'Create Restaurant'
+      click_link 'Edit Nandos'
       fill_in 'Name', with: 'Kentucky Fried Chicken'
       click_button 'Update Restaurant'
       expect(page).to have_content 'Kentucky Fried Chicken'
@@ -72,8 +68,11 @@ feature 'restaurants' do
     scenario 'removes a restaurant when a user clicks a delete link' do
       visit '/restaurants'
       sign_up
-      click_link 'Delete KFC'
-      expect(page).not_to have_content 'KFC'
+      click_link 'Add a restaurant'
+      fill_in 'Name', with: 'Nandos'
+      click_button 'Create Restaurant'
+      click_link 'Delete Nandos'
+      expect(page).not_to have_content 'Nandos'
       expect(page).to have_content 'Restaurant deleted successfully'
     end
   end
