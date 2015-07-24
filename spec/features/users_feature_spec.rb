@@ -37,7 +37,10 @@ feature "User can sign in and out" do
   end
 
   context 'setting limits on users' do
-    before { Restaurant.create name: 'KFC' }
+    before(:each) do
+      restaurant =  Restaurant.create name: 'KFC'
+      review = restaurant.reviews.create(thoughts: "yay", rating: 3)
+    end
     scenario 'user cannot create a restaurant unless they are logged in' do
       visit('/')
       click_link('Add a restaurant')
@@ -57,6 +60,14 @@ feature "User can sign in and out" do
       sign_up
       click_link('Delete KFC')
       expect(page).to have_content "You can't delete someone else's restaurant"
+    end
+
+    scenario 'user can only delete reviews they create' do
+      visit ('/')
+      sign_up
+      click_link('KFC')
+      click_link('Delete Review')
+      expect(page).to have_content "You can't delete someone else's review"
     end
 
     def sign_up

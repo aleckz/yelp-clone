@@ -11,7 +11,10 @@
     %ul
     - @restaurant.reviews.each do |review|
       %li
+        Thoughts:
         = review.thoughts
+        Rating:
         = review.rating
+        = link_to "Delete Review", restaurant_review_path(@restaurant, review), method: :delete
   - else
     %p No reviews
